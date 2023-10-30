@@ -1,0 +1,13 @@
+GET http://localhost:2345/users
+
+###
+POST http://localhost:2345/users
+Content-Type: application/json
+
+{
+    "name": "ryan",
+    "username": "imcool",
+    "email" : "email@gmail.com",
+    "password" :"123456",
+    "confirmPassword" :"123456",
+}

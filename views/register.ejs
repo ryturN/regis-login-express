@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Form</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.16/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto my-10">
+        <div class="w-full bg-white rounded-lg shadow-md p-5">
+            <h1 class="text-xl font-semibold mb-5">Registration Form</h1>
+            <form action="/verify" method="POST">
+                <div class="mb-5">
+                    <label for="name" class="block mb-1">Name</label>
+                    <input id="name" name="name" type="text" class="w-full border-2 border-gray-200 p-2 rounded-lg" placeholder="Name" required>
+                </div>
+                <div class="mb-5">
+                    <label for="username" class="block mb-1" >Username</label>
+                    <input id="username" name="username" type="text" class="w-full border-2 border-gray-200 p-2 rounded-lg" placeholder="Username" required>
+                </div>
+                <div class="mb-5">
+                    <label for="email" class="block mb-1">Email Address</label>
+                    <input id="email" name="email" type="email" class="w-full border-2 border-gray-200 p-2 rounded-lg" placeholder="Email Address"required>
+                </div>
+                <div class="mb-5">
+                    <label for="password" class="block mb-1">Password</label>
+                    <input id="password" name="password" type="password" class="w-full border-2 border-gray-200 p-2 rounded-lg" placeholder="Password"required pattern = "(?=.*\d)(?=.* 
+                    [a-z])(?=.*?[0-9])(?=.*?[~`!@#$%\^&*()\-_=+[\]{};:\x27.,\x22\\|/?>]).{4,}">
+                </div>
+                <div class="mb-5">
+                    <label for="confirmPassword" class="block mb-1">ConfirmPassword</label>
+                    <input id="confirmPassword" name="confirmPassword" type="confirmPassword" class="w-full border-2 border-gray-200 p-2 rounded-lg" placeholder="Confirm Password"required pattern = "(?=.*\d)(?=.* 
+                    [a-z])(?=.*?[0-9])(?=.*?[~`!@#$%\^&*()\-_=+[\]{};:\x27.,\x22\\|/?>]).{4,}">
+                </div>
+                <button type="submit" class="w-full bg-blue-500 text-white py-2 rounded-lg">Register</button>
+            </form>
+        </div>
+    </div>
+    <script>
+        document.getElementById('first_name').addEventListener('input', function() {
+            var firstName = this.value;
+            var lastName = document.getElementById('last_name').value;
+            document.getElementById('full_name').value = firstName + ' ' + lastName;
+        });
+
+        document.getElementById('last_name').addEventListener('input', function() {
+            var firstName = document.getElementById('first_name').value;
+            var lastName = this.value;
+            document.getElementById('full_name').value = firstName + ' ' + lastName;
+        });
+    </script>
+</body>
+</html>
