@@ -21,7 +21,7 @@ exports.login = async(req,res)=>{
         maxAge: 24*60*60*1000,
         secure: true
         })
-        .status(201).render("./home/dashboard.ejs"); 
+        .status(201).redirect("/home"); 
 
     }
   }catch(error){
@@ -40,7 +40,7 @@ exports.register = async (req,res)=>{
             dataStorage.username,
             dataStorage.email,
             dataStorage.password)
-    return res.status(201).send('User Register!')
+    return res.status(201).send('User Register!').render('/')
     }else{
         return res.send('<h1>your verification Code does not match!')
     }
@@ -73,8 +73,8 @@ exports.verify = async (req,res)=>{
     let transporter = nodemailer.createTransport({
         service: "gmail",
         auth: {
-          user: `watashiox@gmail.com`,
-          pass:`xtcvwuvoxccwcong`,
+          user: `yourmail`,
+          pass:`yourpassword`,
         },
       });
 
@@ -94,3 +94,5 @@ exports.verify = async (req,res)=>{
       });
       return res.render("verify.ejs"); 
 }
+
+
