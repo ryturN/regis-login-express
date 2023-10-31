@@ -15,15 +15,15 @@ exports.login = async(req,res)=>{
     const {username ,password}=req.body
     const user = await findUser(username,password);
     if(user){
-      const token = jwt.sign({username,password},process.env.ACCESS_TOKEN_SECRET)
-      return res.cookie('accessToken',token,{
+      const token = jwt.sign({username},process.env.ACCESS_TOKEN_SECRET,{expiresIn: '1h'})
+      return res.cookie('verifyToken',token,{
         httpOnly: true,
         maxAge: 24*60*60*1000,
         secure: true
         })
         .status(201).redirect("/home"); 
-
     }
+    return res.status(402).send('password / username salah')
   }catch(error){
     res.status(401).send('User tidak ditemukan!')
 } 
@@ -73,8 +73,8 @@ exports.verify = async (req,res)=>{
     let transporter = nodemailer.createTransport({
         service: "gmail",
         auth: {
-          user: `yourmail`,
-          pass:`yourpassword`,
+          user: `watashiox@gmail.com`,
+          pass:`xtcvwuvoxccwcong`,
         },
       });
 

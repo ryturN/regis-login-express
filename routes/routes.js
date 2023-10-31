@@ -1,5 +1,6 @@
 const express = require ('express')
 const auth = require('../controller/auth.js')
+const verify = require('../middleware/verifyToken.js')
 
 const router = express.Router();
 
@@ -19,12 +20,19 @@ router.post('/login', auth.login)
 
 router.get('/home',(req,res)=>{
     const cookie = req.cookies;
+    if(!cookie['verifyToken']){
+        return res.redirect('/')
+    }
     const data = {
-        username: cookie['accessToken']
+        username: cookie['verifyToken']
     }
     res.render('home/index',{data});
 })
 router.get('/dashboard',(req,res)=>{
+    const cookie = req.cookies;
+    if(!cookie['verifyToken']){
+        return res.redirect('/')
+    }
     const data = {
         admin:true
     };
@@ -33,7 +41,7 @@ router.get('/dashboard',(req,res)=>{
 
 
 router.get('/logout',(req,res)=>{
-    res.clearCookie('accessToken');
+    res.clearCookie('verifyToken');
     res.redirect('/')
 })
 
