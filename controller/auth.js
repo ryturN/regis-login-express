@@ -21,7 +21,8 @@ exports.login = async(req,res)=>{
         maxAge: 24*60*60*1000,
         secure: true
         })
-        .status(200).send('logged in success')
+        .status(201).render("./home/dashboard.ejs"); 
+
     }
   }catch(error){
     res.status(401).send('User tidak ditemukan!')

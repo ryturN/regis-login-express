@@ -4,6 +4,7 @@ const app = express();
 const dbConfig = require('./dbconfig/index')
 const router = require('./routes/routes')
 const auth = require('./routes/auth')
+const cookieParser = require("cookie-parser");
 
 
 // try{
@@ -16,6 +17,7 @@ const auth = require('./routes/auth')
 
 app.set('view engine', 'ejs');
 
+app.use(cookieParser());
 app.use(express.urlencoded({extended: false}));
 app.use(express.json());
 
