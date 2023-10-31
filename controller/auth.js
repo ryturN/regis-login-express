@@ -2,39 +2,69 @@ const {LocalStorage} = require('node-localstorage')
 const db = require('../dbconfig/index')
 localStorage = new LocalStorage('./scratch')
 const nodemailer = require('nodemailer')
-const User = require('../models/users')
+const {createUser,Users,findUser} = require('../models/users')
 const dotenv= require('dotenv');
+const jwt = require('jsonwebtoken')
 
 dotenv.config();
 
 
+exports.login = async(req,res)=>{
+  try{
+    
+    const {username ,password}=req.body
+    const user = await findUser(username,password);
+    if(user){
+      const token = jwt.sign({username,password},process.env.ACCESS_TOKEN_SECRET)
+      return res.cookie('accessToken',token,{
+        httpOnly: true,
+        maxAge: 24*60*60*1000,
+        secure: true
+        })
+        .status(200).send('logged in success')
+    }
+  }catch(error){
+    res.status(401).send('User tidak ditemukan!')
+} 
+}
 exports.register = async (req,res)=>{
     const {userVerificationCode} = req.body
     const dataStorage = JSON.parse(localStorage.getItem('data'));
     const verificationCode = localStorage.getItem('verify')
     const parsedVerificationCode = parseInt(verificationCode);
     const parsedUserVerificationCode = parseInt(userVerificationCode);
+    console.log(dataStorage)
     if(parsedUserVerificationCode === parsedVerificationCode){
-        User.createUser(dataStorage.name,
+        createUser(dataStorage.name,
             dataStorage.username,
             dataStorage.email,
             dataStorage.password)
-
+    return res.status(201).send('User Register!')
     }else{
         return res.send('<h1>your verification Code does not match!')
     }
 }
 
 
-exports.verify =  (req,res)=>{
+exports.verify = async (req,res)=>{
     console.log(req.body);
-    
+    const {name, username , email,password,confirmPassword}= req.body
     const dataStorage = {
         name : req.body.name,
         username : req.body.username,
         email : req.body.email,
-        password : req.body.password
+        password : req.body.password,
+        confirmPassword : req.body.confirmPassword
     };
+    const findEmail = await Users.findOne({where : {email}})
+    console.log(findEmail)
+    console.log(email)
+      if(dataStorage.email === Users.findOne({where: {email}})){
+        return res.status(401).send('email already taken!')
+      }
+    if(dataStorage.password !== dataStorage.confirmPassword){
+      return res.status(401).send('Password & Confirm Password Tidak Sama!');
+    }
     const verificationCode = Math.floor(10000 + Math.random() * 90000);
     localStorage.setItem('data',JSON.stringify(dataStorage));
     localStorage.setItem('verify',JSON.stringify(verificationCode));

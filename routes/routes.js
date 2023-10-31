@@ -15,6 +15,6 @@ router.get('/verify',(req,res)=>{
 
 router.post('/register',auth.register)
 router.post('/verify',auth.verify)
-
+router.post('/login', auth.login)
 
 module.exports =router;
