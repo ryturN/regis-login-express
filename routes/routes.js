@@ -5,7 +5,13 @@ const verify = require('../middleware/verifyToken.js')
 const router = express.Router();
 
 router.get('/',(req,res)=>{
-    res.render('index')
+    const cookie = req.cookies;
+    if(!cookie['verifyToken']){
+        res.render('index')
+    }
+    if (cookie['verifyToken']){
+        return res.redirect('/home')
+    }
 })
 router.get('/register',(req,res)=>{
     res.render('register')
@@ -18,15 +24,12 @@ router.post('/register',auth.register)
 router.post('/verify',auth.verify)
 router.post('/login', auth.login)
 
-router.get('/home',(req,res)=>{
-    const cookie = req.cookies;
-    if(!cookie['verifyToken']){
-        return res.redirect('/')
-    }
-    const data = {
-        username: cookie['verifyToken']
-    }
-    res.render('home/index',{data});
+// router.get('/profile', auth.profile)
+
+router.get('/profile',auth.profile)
+router.get('/home',verify.verificationToken,(req,res)=>{
+    const user = req.user;
+    res.render('home',{user})
 })
 router.get('/dashboard',(req,res)=>{
     const cookie = req.cookies;
@@ -45,4 +48,10 @@ router.get('/logout',(req,res)=>{
     res.redirect('/')
 })
 
+// router.get('/profile',(req,res)=>{
+//     const cookie = req.cookies;
+//     if(!cookie['verifyToken']){
+//         return res.redirect('/')
+//     }
+// })
 module.exports =router;

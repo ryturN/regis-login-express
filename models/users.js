@@ -29,14 +29,14 @@ const createUser = async function(name,username,email,password){
 
 const findUser = async function(username, password,email) {
     try {
-        const user = await Users.findOne({ where: { username } });
+        const user = await Users.findOne({ where: { username} });
+
         if (user) {
             const result = bcrypt.compareSync(password, user.password);
             if (result) {
                 return user;
             }
         } else {
-            // Handle the case where the user is not found
             return user;
         }
     } catch (error) {

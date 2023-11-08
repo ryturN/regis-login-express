@@ -26,9 +26,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 
 
+
+const port = 2345
 app.use('/',router);
 
-app.listen(2345,()=>{
-    console.log('server is running on port 2345')
+app.listen(port,()=>{
+    console.log('server is running on port:' + port)
 })
 

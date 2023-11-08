@@ -11,9 +11,16 @@ dotenv.config();
 
 exports.login = async(req,res)=>{
   try{
-    
     const {username ,password}=req.body
     const user = await findUser(username,password);
+    console.log(user)
+    // if(username == `${prcoess.env.ADMIN_USERNAME}` && await bcrypt.compare(password, `${process.env.ADMIN_PASSWORD}`)){
+    //   const data = {
+    //     admin : true
+    //   }
+    //   const token = jwt.sign(data, process.env.ACCESS_TOKEN_SECRET,{expiresIn: '1h'})
+    //   return res.cookie('verifyToken',token).status(201).redirect('/home');
+    // }
     if(user){
       const token = jwt.sign({username},process.env.ACCESS_TOKEN_SECRET,{expiresIn: '1h'})
       return res.cookie('verifyToken',token,{
@@ -21,7 +28,7 @@ exports.login = async(req,res)=>{
         maxAge: 24*60*60*1000,
         secure: true
         })
-        .status(201).redirect("/home"); 
+        .status(201).send(user); 
     }
     return res.status(402).send('password / username salah')
   }catch(error){
@@ -92,7 +99,12 @@ exports.verify = async (req,res)=>{
         }
         console.log("Message sent: %s", info.messageId);
       });
-      return res.render("verify.ejs"); 
+      return res.send(dataStorage.name,dataStorage.email,dataStorage.username); 
 }
 
 
+
+exports.profile = async(req,res)=>{
+  username = req.body.username;
+  return console.log(username);
+}
