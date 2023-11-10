@@ -36,18 +36,21 @@ exports.login = async(req,res)=>{
 } 
 }
 exports.register = async (req,res)=>{
-    const {userVerificationCode} = req.body
+    const {userVerificationCode,email} = req.body
     const dataStorage = JSON.parse(localStorage.getItem('data'));
     const verificationCode = localStorage.getItem('verify')
     const parsedVerificationCode = parseInt(verificationCode);
     const parsedUserVerificationCode = parseInt(userVerificationCode);
     console.log(dataStorage)
+    if(email !== dataStorage.email){
+      res.status(402).send('Wrong Email!')
+    }
     if(parsedUserVerificationCode === parsedVerificationCode){
         createUser(dataStorage.name,
             dataStorage.username,
             dataStorage.email,
             dataStorage.password)
-    return res.status(201).send('User Register!').render('/')
+    return res.status(201).send(dataStorage)
     }else{
         return res.send('<h1>your verification Code does not match!')
     }
@@ -99,7 +102,8 @@ exports.verify = async (req,res)=>{
         }
         console.log("Message sent: %s", info.messageId);
       });
-      return res.send(dataStorage.name,dataStorage.email,dataStorage.username); 
+       res.json({email:dataStorage.email})
+
 }
 
 
