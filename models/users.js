@@ -21,6 +21,7 @@ const Users = db.define('users',{
 {
     freezeTableName: true,
 })
+     db.sync();  
 
 const createUser = async function(name,username,email,password){
     const hashedPassword = await bcrypt.hashSync(password,10)

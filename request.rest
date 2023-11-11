@@ -1,7 +1,7 @@
 GET http://localhost:2345/users
 
 ###
-POST http://localhost:2345/users
+POST http://localhost:2345/register
 Content-Type: application/json
 
 {
