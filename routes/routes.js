@@ -1,6 +1,7 @@
 const express = require ('express')
 const auth = require('../controller/auth.js')
-const verify = require('../middleware/verifyToken.js')
+const verify = require('../middleware/verifyToken.js');
+const  profile  = require('../controller/profile.js');
 
 const router = express.Router();
 
@@ -23,10 +24,11 @@ router.get('/verify',(req,res)=>{
 router.post('/register',auth.register)
 router.post('/verify',auth.verify)
 router.post('/login', auth.login)
+router.get('/profile/:username?',profile.profileUsers);
+router.get('/profile',profile.profiles);
 
 // router.get('/profile', auth.profile)
 
-router.get('/profile',auth.profile)
 router.get('/home',verify.verificationToken,(req,res)=>{
     const user = req.user;
     res.render('home',{user})
@@ -45,13 +47,16 @@ router.get('/dashboard',(req,res)=>{
 
 router.get('/logout',(req,res)=>{
     res.clearCookie('verifyToken');
-    res.redirect('/')
+    res.json({
+        message: 'See You Later Nerd'})
 })
 
-// router.get('/profile',(req,res)=>{
-//     const cookie = req.cookies;
-//     if(!cookie['verifyToken']){
-//         return res.redirect('/')
-//     }
-// })
+router.get('/*',(req,res)=>{
+    res.status(404).json({
+        status: 'fail',
+        message: 'u got wrong address bro'
+    })
+})
+
+
 module.exports =router;

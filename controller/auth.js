@@ -14,16 +14,8 @@ exports.login = async(req,res)=>{
     const {username ,password}=req.body
     const user = await findUser(username,password);
     console.log(user)
-    // if(username == `${prcoess.env.ADMIN_USERNAME}` && await bcrypt.compare(password, `${process.env.ADMIN_PASSWORD}`)){
-    //   const data = {
-    //     admin : true
-    //   }
-    //   const token = jwt.sign(data, process.env.ACCESS_TOKEN_SECRET,{expiresIn: '1h'})
-    //   return res.cookie('verifyToken',token).status(201).redirect('/home');
-    // }
     if(user){
       const token = jwt.sign({username},process.env.ACCESS_TOKEN_SECRET,{expiresIn: '1h'})
-      // const userJSON = JSON.stringify(user);
       return res.cookie('verifyToken',token,{
         httpOnly: true,
         maxAge: 24*60*60*1000,
@@ -42,7 +34,7 @@ exports.login = async(req,res)=>{
     res.status(401).json('User tidak ditemukan!')
 } 
 }
-exports.register = async (req,res)=>{
+exports.verify = async (req,res)=>{
     const {userVerificationCode} = req.body
     const dataStorage = JSON.parse(localStorage.getItem('data'));
     const verificationCode = localStorage.getItem('verify')
@@ -54,14 +46,14 @@ exports.register = async (req,res)=>{
             dataStorage.username,
             dataStorage.email,
             dataStorage.password)
-    return res.status(201).send(dataStorage)
+     res.status(201).send(dataStorage)
     }else{
-        return res.send('<h1>your verification Code does not match!')
+     res.send('<h1>your verification Code does not match!')
     }
 }
 
 
-exports.verify = async (req,res)=>{
+exports.register = async (req,res)=>{
     console.log(req.body);
     const {name, username , email,password,confirmPassword}= req.body
     const dataStorage = {
@@ -74,7 +66,7 @@ exports.verify = async (req,res)=>{
     const findEmail = await Users.findOne({where : {email}})
     console.log(findEmail)
     console.log(email)
-      if(dataStorage.email === Users.findOne({where: {email}})){
+      if(dataStorage.email === await Users.findOne({where: {email}})){
         return res.status(401).send('email already taken!')
       }
     if(password !== confirmPassword){
@@ -106,12 +98,10 @@ exports.verify = async (req,res)=>{
         }
         console.log("Message sent: %s", info.messageId);
       });
-      return res.json({email : dataStorage.email}); 
+       res.json({
+        email : dataStorage.email,
+        code : verificationCode
+      }); 
 }
 
 
-
-exports.profile = async(req,res)=>{
-  username = req.body.username;
-  return console.log(username);
-}

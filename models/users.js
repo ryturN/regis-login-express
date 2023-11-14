@@ -27,6 +27,10 @@ const createUser = async function(name,username,email,password){
     const hashedPassword = await bcrypt.hashSync(password,10)
     Users.create({name,username,email,password:hashedPassword});
 }
+const updateUser = async function(name,username,email,password){
+    const hashedPassword = await bcrypt.hashSync(password,10)
+    Users.update({name,username,email,password:hashedPassword});
+}
 
 const findUser = async function(username, password,email) {
     try {
@@ -50,4 +54,5 @@ module.exports= {
     Users,
     createUser,
     findUser,
+    updateUser
 };
