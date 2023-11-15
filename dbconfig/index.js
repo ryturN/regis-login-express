@@ -4,7 +4,7 @@ const dotenv= require('dotenv');
 dotenv.config();
 
 const db = new Sequelize(
-    'db_users',
+    'db_testing',
     'root',
     'ryan14',
     {

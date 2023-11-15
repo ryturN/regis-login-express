@@ -1,7 +1,9 @@
 const {LocalStorage} = require('node-localstorage')
 const db = require('../dbconfig/index')
 localStorage = new LocalStorage('./scratch')
-const {createUser,Users,findUser,updateUser} = require('../models/users')
+const {Users, freelancerTable}= require('../models/table')
+const {createUser,findUser,updateUser} = require('../models/createFunc/users')
+const {createFreelancer,updateFreelancer,findFreelancer} = require('../models/createFunc/freelancerCreate')
 const auth = require('./auth')
 
 
@@ -9,7 +11,7 @@ exports.profileUsers = async(req,res)=>{
   let { username } = req.params;
   const cookie = req.cookies;
   try {
-    const user = await Users.findOne({ where: { username } });
+    const user = await Users.findOne({ where: { username } }) || await freelancerTable.findOne({where: {username}});
   
       if (!cookie['verifyToken']) {
         return res.status(401).json({
@@ -19,10 +21,8 @@ exports.profileUsers = async(req,res)=>{
       if (!user) {
         return res.status(404).json({ message: 'User tidak ditemukan!' });
       }
-  
-  
       res.status(200).json({
-        name: user.name,
+        fullName: user.fullName,
         username: user.username,
         email: user.email,
       });
