@@ -3,7 +3,7 @@ const db = require('../dbconfig/index')
 localStorage = new LocalStorage('./scratch')
 const nodemailer = require('nodemailer')
 const {createUser,findUser} = require('../models/createFunc/users')
-const {Users} = require('../models/table')
+const {Users, freelancerTable} = require('../models/table')
 const {createFreelancer,updateFreelancer,findFreelancer} = require('../models/createFunc/freelancerCreate')
 const dotenv= require('dotenv');
 const jwt = require('jsonwebtoken')
@@ -31,6 +31,8 @@ exports.login = async(req,res)=>{
         username: user.username,
         email: user.email,
         role: "consumer",
+        point: user.specialPoint,
+        level: user.level,
         token: token
       });  
     }
@@ -48,6 +50,8 @@ exports.login = async(req,res)=>{
           username: freelancer.username,
           email: freelancer.email,
           role : "freelancer",
+          EXP: freelancer.experiencePoint,
+          level: freelancer.level, 
           token: token
         });  
       }
@@ -63,12 +67,18 @@ exports.login = async(req,res)=>{
 
 }
 exports.verify = async (req,res)=>{
-    const {userVerificationCode} = req.body
+    const {userVerificationCode,email} = req.body
     const dataStorage = JSON.parse(localStorage.getItem('data'));
     const verificationCode = localStorage.getItem('verify')
     const parsedVerificationCode = parseInt(verificationCode);
     const parsedUserVerificationCode = parseInt(userVerificationCode);
     console.log(dataStorage)
+    if(email !== dataStorage.email){
+      return res.status(402).json({
+        status: 'fail',
+        message: 'email tidak sama!'
+      })
+    }
     if(parsedUserVerificationCode === parsedVerificationCode){
       if(dataStorage.options == "consumer"){
         const consumerId = 'consumer_'+nanoid(20)
@@ -93,7 +103,9 @@ exports.verify = async (req,res)=>{
           res.status(201).send(dataStorage)
       }
     }else{
-     res.send('<h1>your verification Code does not match!')
+     res.json({
+      status: 'fail',
+      message: 'your verification Code does not match!'})
     }
 }
 
@@ -101,20 +113,47 @@ exports.verify = async (req,res)=>{
 exports.register = async (req,res)=>{
     console.log(req.body);
     const {fullName,username ,email,password,confirmPassword,options}= req.body
+    const freelancerData = await freelancerTable.findOne({where: {username}})
     const dataStorage = {
-        fullName : req.body.fullName,
-        username : req.body.username,
-        email : req.body.email,
-        password : req.body.password,
-        confirmPassword : req.body.confirmPassword,
-        options: req.body.options
+      fullName : req.body.fullName,
+      username : req.body.username,
+      email : req.body.email,
+      password : req.body.password,
+      confirmPassword : req.body.confirmPassword,
+      options: req.body.options
     };
-    const findEmail = await Users.findOne({where : {email}})
-    console.log(findEmail)
-    console.log(email)
-      if(dataStorage.email === await Users.findOne({where: {email}})){
-        return res.status(401).send('email already taken!')
+    const usernameCheck = await Users.findAll({where : {username}})
+    const usernameCheckF = await freelancerTable.findAll({where: {username}}) 
+    if(options == 'consumer'){
+      if (usernameCheck.length > 0) {
+        return res.status(401).json({
+          status: 'fail',
+          message: 'username already taken!'
+        });
       }
+      const emailCheck= await Users.findAll({where: {email}})
+      if(emailCheck.length > 0){
+        return res.status(401).json({
+          status: 'fail',
+          message: 'email already taken!'
+        })
+      }
+    }
+    if(options == 'freelancer'){
+      if (usernameCheckF.length > 0) {
+        return res.status(401).json({
+          status: 'fail',
+          message: 'username already taken!'
+        });
+      }
+      const emailCheckF= await freelancerTable.findAll({where: {email}})
+      if(emailCheckF.length > 0){
+        return res.status(401).json({
+          status: 'fail',
+          message: 'email already taken!'
+        })
+      }
+    }
     if(password !== confirmPassword){
       return res.status(401).send('Password & Confirm Password Tidak Sama!');
     }
@@ -123,32 +162,34 @@ exports.register = async (req,res)=>{
       localStorage.setItem('verify',verificationCode);
       console.log(verificationCode)
       let transporter = nodemailer.createTransport({
-          service: "gmail",
-          auth: {
-            user: `watashiox@gmail.com`,
-            pass:`xtcvwuvoxccwcong`,
-          },
-        });
-  
-        let mailOptions = {
-          from: '"LowerMoon" uppermoon1404@gmail.com',
-          to: req.body.email,
-          subject: "Verification Code",
-          text: `Your verification code is ${verificationCode}.`,
-          html: `<b>Your verification code is ${verificationCode}.</b>`,
-        };
-        transporter.sendMail(mailOptions, (error, info) => {
-          if (error) {
-            console.error("Error sending email:", error);
-            return res.send("Error sending email").code(500);
-          }
-          console.log("Message sent: %s", info.messageId);
-        });
-         res.json({
-          email : dataStorage.email,
-          code : verificationCode,
-          role : options
-        }); 
+        service: "gmail",
+        auth: {
+          user: `watashiox@gmail.com`,
+          pass:`xtcvwuvoxccwcong`,
+        },
+      });
+      
+      let mailOptions = {
+        from: '"LowerMoon" uppermoon1404@gmail.com',
+        to: req.body.email,
+        subject: "Verification Code",
+        text: `Your verification code is ${verificationCode}.`,
+        html: `<b>Your verification code is ${verificationCode}.</b>`,
+      };
+      transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+          console.error("Error sending email:", error);
+          return res.send("Error sending email").code(500);
+        }
+        console.log("Message sent: %s", info.messageId);
+      });
+      res.json({
+        email : dataStorage.email,
+        code : verificationCode,
+        role : options
+      }); 
+    
+    
 }
 
 

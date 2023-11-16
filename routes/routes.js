@@ -48,6 +48,7 @@ router.get('/dashboard',(req,res)=>{
 router.get('/logout',(req,res)=>{
     res.clearCookie('verifyToken');
     res.json({
+        status: 'success',
         message: 'See You Later Nerd'})
 })
 
