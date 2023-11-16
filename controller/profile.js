@@ -25,6 +25,7 @@ exports.profileUsers = async(req,res)=>{
           username: user.username,
           email: user.email,
           specialPoint : user.specialPoint,
+          level: user.level,
           role: 'consumer'
         });
       }
@@ -34,6 +35,7 @@ exports.profileUsers = async(req,res)=>{
           username: freelancer.username,
           email: freelancer.email,
           EXP: freelancer.experiencePoint,
+          level: freelancer.level,
           role: 'freelancer'
         });
       }

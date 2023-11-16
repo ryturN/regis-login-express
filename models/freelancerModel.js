@@ -42,6 +42,10 @@ const freelancers= {
         type: DataTypes.INTEGER,
         defaultValue: 0,
     },
+    level: {
+        type: DataTypes.INTEGER,
+        defaultValue: 1,
+    },
     skills: {
         type: DataTypes.STRING,
     },
