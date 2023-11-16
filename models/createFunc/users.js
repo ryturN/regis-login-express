@@ -13,7 +13,7 @@ const updateUser = async function(name,username,email,password){
 
 const findUser = async function(username, password,email) {
     try {
-        const user = await Users.findOne({ where: { username} });
+        const user = await Users.findOne({ where: { username } });
         console.log(user)
         if (user) {
             const result = bcrypt.compareSync(password, user.password);

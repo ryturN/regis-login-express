@@ -8,24 +8,38 @@ const auth = require('./auth')
 
 
 exports.profileUsers = async(req,res)=>{
-  let { username } = req.params;
+  const { username } = req.params;
   const cookie = req.cookies;
   try {
-    const user = await Users.findOne({ where: { username } }) || await freelancerTable.findOne({where: {username}});
-  
+    const user = await Users.findOne({ where: { username } }) 
+    const freelancer = await freelancerTable.findOne({where: {username}});
+    
       if (!cookie['verifyToken']) {
-        return res.status(401).json({
+         res.status(401).json({
            status: 'fail',
            message: 'Unauthorized!' });
       }
-      if (!user) {
-        return res.status(404).json({ message: 'User tidak ditemukan!' });
+      if(user){
+       return res.status(200).json({
+          name: user.fullName,
+          username: user.username,
+          email: user.email,
+          specialPoint : user.specialPoint,
+          role: 'consumer'
+        });
       }
-      res.status(200).json({
-        fullName: user.fullName,
-        username: user.username,
-        email: user.email,
-      });
+      if(freelancer){
+      return res.status(200).json({
+          name : freelancer.fullName,
+          username: freelancer.username,
+          email: freelancer.email,
+          EXP: freelancer.experiencePoint,
+          role: 'freelancer'
+        });
+      }
+      if(!user || !freelancer){
+       return res.status(404).json({ message: 'User tidak ditemukan!' });
+      }
     } catch (error) {
       console.error(error); 
       res.status(500).json({ 
