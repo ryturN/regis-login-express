@@ -2,18 +2,28 @@ const express = require ('express')
 const auth = require('../controller/auth.js')
 const verify = require('../middleware/verifyToken.js');
 const  profile  = require('../controller/profile.js');
+const jwt = require('jsonwebtoken')
+const {Users,freelancerTable} = require('../models/table.js');
+const  resetPassword  = require('../controller/resetPassword.js');
 
 const router = express.Router();
 
-router.get('/',(req,res)=>{
-    const cookie = req.cookies;
-    if(!cookie['verifyToken']){
-        res.render('index')
+router.get('/', async (req, res) => {
+  const cookie = await req.cookies;
+    if (!cookie.verifyToken) {
+      return res.render('index');
     }
-    if (cookie['verifyToken']){
-        return res.redirect('/home')
-    }
-})
+    const token = cookie.verifyToken;
+    await jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, async (err, decoded) => {
+      if (err) {
+        return res.render('index');
+      }
+      return res.redirect('/home')
+    })
+  });
+
+  router.get('/home', verify.verificationToken);
+
 router.get('/register',(req,res)=>{
     res.render('register')
 })
@@ -22,20 +32,22 @@ router.get('/verify',(req,res)=>{
 })
 
 router.post('/register',auth.register)
-router.post('/verify',auth.verify)
+router.post('/verifyUser',auth.verify)
 router.post('/login', auth.login)
-router.get('/profile/:username?',profile.profileUsers);
+router.get('/profile/:username',profile.profileUsers);
 router.get('/profile',profile.profiles);
-
+router.post('/forget',resetPassword.forgetPassword);
+// router.get('/forget',(req,res)=>{
+//   res.render('forget')
+// })
+router.post('/verify', resetPassword.verifyCode)
+router.post('/forget/verify/new', resetPassword.enterNewPassword)
 // router.get('/profile', auth.profile)
 
-router.get('/home',verify.verificationToken,(req,res)=>{
-    const user = req.user;
-    res.render('home',{user})
-})
+
 router.get('/dashboard',(req,res)=>{
     const cookie = req.cookies;
-    if(!cookie['verifyToken']){
+    if(!cookie.verifyToken){
         return res.redirect('/')
     }
     const data = {
@@ -43,6 +55,8 @@ router.get('/dashboard',(req,res)=>{
     };
     res.render('home/dashboard',{data});
 })
+
+
 
 
 router.get('/logout',(req,res)=>{

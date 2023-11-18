@@ -12,18 +12,16 @@ const createFreelancer = async function(freelancer_id,fullName,username,email,pa
         password:hashedPassword,
         });
 }
-const updateFreelancer = async function(name,username,email,password){
+const updateFreelancer = async function(password){
     const hashedPassword = await bcrypt.hashSync(password,10)
-    freelancerTable.update({full_name,
-        username,
-        email,
-        password:hashedPassword});
+    freelancerTable.update({
+        password:hashedPassword
+    });
 }
 
 const findFreelancer = async function(username, password) {
     try {
         const user = await freelancerTable.findOne({ where: { username } });
-        console.log(user);
         if (user) {
             const result = bcrypt.compareSync(password, user.password);
             if (result) {

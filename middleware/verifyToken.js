@@ -1,18 +1,38 @@
 const jwt = require('jsonwebtoken');
+const {Users,freelancerTable} = require('../models/table.js');
 
-exports.verificationToken = (req, res, next) => {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
 
-  if (!token) {
-    return res.sendStatus(401); // Unauthorized
-  }
+exports.verificationToken = async (req, res) => {
+  const cookie = await req.cookies;
+  
 
-  try {
-    const decodedToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
-    req.user = decodedToken;
-    next();
-  } catch (err) {
-    return res.sendStatus(403); // Forbidden
-  }
+    if (!cookie.verifyToken) {
+
+      return res.render('index');
+    }
+    const token = cookie.verifyToken;
+    await jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, async (err, decoded) => {
+      if (err) {
+        return res.render('index');
+      }
+      const username = decoded.username
+      const userConsumer = await Users.findOne({where: {username}})
+      const userFreelancer = await freelancerTable.findOne({where: {username}})
+      if(userConsumer){
+        res.json({
+              name : userConsumer.fullName,
+              username: userConsumer.username,
+              email: userConsumer.email,
+              role: 'consumer'
+            });
+        }
+        if(userFreelancer){
+            res.json({
+                name: userFreelancer.fullName,
+                username: userFreelancer.username,
+                email: userFreelancer.email,
+                role: 'freelancer'
+            })
+        }
+    });
 };

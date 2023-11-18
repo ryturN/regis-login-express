@@ -10,7 +10,7 @@
     <div class="container mx-auto my-10">
         <div class="w-full bg-white rounded-lg shadow-md p-5">
             <h1 class="text-xl font-semibold mb-5">Registration Form</h1>
-            <form action="/verify" method="POST">
+            <form action="/register" method="POST">
                 <div class="mb-5">
                     <label for="name" class="block mb-1">Name</label>
                     <input id="name" name="name" type="text" class="w-full border-2 border-gray-200 p-2 rounded-lg" placeholder="Name" required>
@@ -33,6 +33,10 @@
                     <input id="confirmPassword" name="confirmPassword" type="confirmPassword" class="w-full border-2 border-gray-200 p-2 rounded-lg" placeholder="Confirm Password"required pattern = "(?=.*\d)(?=.* 
                     [a-z])(?=.*?[0-9])(?=.*?[~`!@#$%\^&*()\-_=+[\]{};:\x27.,\x22\\|/?>]).{4,}">
                 </div>
+                <select name="option" id="">
+                <option value="consumer">cons</option>
+                <option value="freelancer">Saab</option>
+            </select>
                 <button type="submit" class="w-full bg-blue-500 text-white py-2 rounded-lg">Register</button>
             </form>
         </div>

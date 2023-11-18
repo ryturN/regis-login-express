@@ -10,7 +10,7 @@
 
 <body class="flex justify-center items-center h-screen">
     <div class="max-w-md w-full">
-        <form action="/verify" method="post"
+        <form action="/forgetPassword" method="post"
             class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
             <h2 class="text-2xl text-center mb-8">Email Verification</h2>
             <div class="mb-4">
@@ -21,19 +21,11 @@
                     class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                     id="email" type="email" name="email" required placeholder="Email">
             </div>
-            <div class="mb-6">
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="userVerificationCode">
-                    Verification Code
-                </label>
-                <input
-                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    id="userVerificationCode" type="text" name="userVerificationCode" required
-                    placeholder="Verification Code">
-            </div>
+    
             <div class="flex items-center justify-center">
                 <input type="submit"
                     class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                    value="Verify">
+                    value="forget">
             </div>
         </form>
     </div>

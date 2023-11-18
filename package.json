@@ -25,6 +25,7 @@
     "node-localstorage": "^3.0.5",
     "nodemailer": "^6.9.7",
     "sequelize": "^6.33.0",
+    "sessionstorage-for-nodejs": "^1.0.2",
     "uuid": "^9.0.1"
   }
 }
