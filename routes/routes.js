@@ -5,6 +5,7 @@ const  profile  = require('../controller/profile.js');
 const jwt = require('jsonwebtoken')
 const {Users,freelancerTable} = require('../models/table.js');
 const  resetPassword  = require('../controller/resetPassword.js');
+const bcrypt = require('bcrypt')
 
 const router = express.Router();
 
@@ -34,15 +35,15 @@ router.get('/verify',(req,res)=>{
 router.post('/register',auth.register)
 router.post('/verifyUser',auth.verify)
 router.post('/login', auth.login)
-router.get('/profile/:username',profile.profileUsers);
+router.get('/profile/:username?',profile.profileUsers);
+router.all('/profile/edit',profile.updateProfile);
 router.get('/profile',profile.profiles);
 router.post('/forget',resetPassword.forgetPassword);
-// router.get('/forget',(req,res)=>{
-//   res.render('forget')
-// })
-router.post('/verify', resetPassword.verifyCode)
+router.get('/forget',(req,res)=>{
+  res.render('forget')
+})
+router.post('/forget/verify', resetPassword.verifyCode)
 router.post('/forget/verify/new', resetPassword.enterNewPassword)
-// router.get('/profile', auth.profile)
 
 
 router.get('/dashboard',(req,res)=>{
@@ -66,7 +67,7 @@ router.get('/logout',(req,res)=>{
         message: 'See You Later Nerd'})
 })
 
-router.get('/*',(req,res)=>{
+router.get('*',(req,res)=>{
     res.status(404).json({
         status: 'fail',
         message: 'u got wrong address bro'

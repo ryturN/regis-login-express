@@ -1,7 +1,4 @@
-// const {LocalStorage} = require('node-localstorage')
 const db = require('../dbconfig/index')
-// localStorage = new LocalStorage('./scratch')
-// const localStorage = require('localStorage')
 const sessionStorage = require('sessionstorage-for-nodejs');
 const nodemailer = require('nodemailer')
 const {createUser,findUser} = require('../models/createFunc/users')
@@ -21,7 +18,6 @@ exports.login = async(req,res)=>{
     const {username,email,password,options}=req.body
     const user = await findUser(username,password);
     const freelancer = await findFreelancer(username,password)
-
 
 
 
@@ -85,7 +81,6 @@ exports.verify = async (req,res)=>{
     if (!cookie.saveData) {
       return res.json({status: 'fail',message: 'fail'});
     }
-    console.log(cookie.saveData)
     const data = cookie.saveData;
     await jwt.verify(data, process.env.ACCESS_TOKEN_SECRET, async (err, decoded) => {
     if(err){
@@ -99,7 +94,6 @@ exports.verify = async (req,res)=>{
     const verificationCode = decoded.verificationCode
     const parsedVerificationCode = parseInt(verificationCode);
     const parsedUserVerificationCode = parseInt(userVerificationCode);
-    console.log(dataStorage)
     if(email !== dataStorage.email){
       return res.status(402).json({
         status: 'fail',
@@ -109,7 +103,6 @@ exports.verify = async (req,res)=>{
     if(parsedUserVerificationCode === parsedVerificationCode){
       if(dataStorage.options == "consumer"){
         const consumerId = 'consumer_'+nanoid(20)
-        console.log(consumerId)
         createUser(
           consumerId,
           dataStorage.fullName,
@@ -142,7 +135,6 @@ exports.verify = async (req,res)=>{
       
       exports.register = async (req,res)=>{
         try{
-        console.log(req.body);
         const {fullName,username ,email,password,confirmPassword,options}= req.body
         const dataStorage = {
           fullName : req.body.fullName,
@@ -194,9 +186,6 @@ exports.verify = async (req,res)=>{
     if(password !== confirmPassword){
       return res.status(401).send('Password & Confirm Password Tidak Sama!');
     }
-      // sessionStorage.setItem('data',JSON.stringify(dataStorage));
-      // sessionStorage.setItem('verify',verificationCode);
-      console.log(verificationCode)
       let transporter = nodemailer.createTransport({
         service: "gmail",
         auth: {

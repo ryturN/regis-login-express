@@ -27,7 +27,7 @@ const userModel = {
         type: DataTypes.STRING
     },
     telephoneNumber:{
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING,
     },
     nationalId:{
         type: DataTypes.STRING,

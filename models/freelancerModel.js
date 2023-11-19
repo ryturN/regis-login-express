@@ -30,7 +30,7 @@ const freelancers= {
         type: DataTypes.STRING,
     },
     telephoneNumber:{
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING,
     },
     nationalId:{
         type: DataTypes.STRING,
@@ -39,7 +39,7 @@ const freelancers= {
         type: DataTypes.STRING,
     },
     experiencePoint:{
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING,
         defaultValue: 0,
     },
     level: {

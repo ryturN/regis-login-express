@@ -121,7 +121,6 @@ exports.forgetPassword = async (req, res) => {
                 })
             }
             const verifCode = decoded.verificationCode
-            console.log(verifCode)
             if(userVerifCode == verifCode){
                 return res.status(202).json({
                     status: 'success',

@@ -22,7 +22,9 @@ const Users = db.define('users',userModel,
 })
         // db.drop().then(()=>{
 
-            db.sync(); 
+            db.sync().then(()=>{
+                console.log('database sync!')
+            }); 
         // })
 
 // foto.hasOne(freelancerTable,{
