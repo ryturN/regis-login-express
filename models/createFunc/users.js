@@ -6,9 +6,9 @@ const createUser = async function(consumerId,fullName,username,email,password){
     const hashedPassword = await bcrypt.hashSync(password,10)
     Users.create({consumerId,fullName,username,email,password:hashedPassword});
 }
-const updateUser = async function(name,username,email,password){
+const updateUserPassword = async function(password){
     const hashedPassword = await bcrypt.hashSync(password,10)
-    Users.update({name,username,email,password:hashedPassword});
+    Users.update({password:hashedPassword});
 }
 
 const findUser = async function(username, password,email) {
@@ -31,5 +31,5 @@ const findUser = async function(username, password,email) {
 module.exports= {
     createUser,
     findUser,
-    updateUser
+    updateUserPassword
 };

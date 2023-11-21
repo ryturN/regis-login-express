@@ -123,7 +123,6 @@ exports.updateProfile = async(req,res)=>{
       const userFreelancer = await freelancerTable.findOne({ where: { username } })
 
      const usernameCheck = await Users.findAll({where : {username}})
-     const emailCheck = await Users.findAll({where : {username}})
 
     if(userConsumer){
       if(fullName == userConsumer.fullName && email == userConsumer.email && password == userConsumer.password(bcrypt.compareSync(password, userConsumer.password)) && telephoneNumber == userConsumer.telephoneNumber && nationalId == userConsumer.nationalId){

@@ -144,10 +144,10 @@ exports.forgetPassword = async (req, res) => {
 }
 
  exports.enterNewPassword = async(req,res)=>{
-    const {password,confirmNewPassword} =req.body
-    const cookie = req.cookies
+    const {password,confirmNewPassword} =req.body  //req body password & confirm
+    const cookie = req.cookies //req cookies
 
-    if(!cookie.emailToken){
+    if(!cookie.emailToken){ //if doesnt have cookie name email token
         return res.status(404)
         .json({
             status: 'fail',
@@ -155,40 +155,47 @@ exports.forgetPassword = async (req, res) => {
         })
     }
     const emailToken = cookie.emailToken
-    await jwt.verify(emailToken,process.env.ACCESS_TOKEN_SECRET, async(err,decoded)=>{
-        if(err){
+    //if cookie exist checking is that right token or not
+    await jwt.verify(emailToken,process.env.ACCESS_TOKEN_SECRET, async(err,decoded)=>{ 
+        if(err){ //if the token is not right , then error
             req.status(500).json({
                 status: 'fail',
                 message: err
-            })
+            }) 
         }
-            const email = decoded.email
-            const findConsumerEmail = await Users.findOne({where: {email} })
-            const findFreelancerEmail = await freelancerTable.findOne({where: {email} })
+        //if the token is right
+            const email = decoded.email //decoded email
+            const findConsumerEmail = await Users.findOne({where: {email} }) //find user with email 
+            const findFreelancerEmail = await freelancerTable.findOne({where: {email} }) //find freelancer with email
+        
+        //if password - confirm password not match 
+            if(password !== confirmNewPassword){
+                res.status(402).json({
+                    status: 'fail',
+                    message: 'password - confirm password tidak sama!'
+                })
+            }
+        })
+        //if got consumer
         if(findConsumerEmail){
-            const hashedPassword = await bcrypt.hashSync(password,10)
-            findConsumerEmail.update({password:hashedPassword});
+            const hashedPassword = await bcrypt.hashSync(password,10) //hashed password
+            findConsumerEmail.update({password:hashedPassword}); //then update the password using email user
             res.status(202)
             .json({
-                status: 'success',
+                status: 'success', //sending status success
             })
             }
         
+        //if got freelancer
         if(findFreelancerEmail){
-            const hashedPassword = await bcrypt.hashSync(password,10)
-            findFreelancerEmail.update({password: hashedPassword})
+            const hashedPassword = await bcrypt.hashSync(password,10) //hashed password
+            findFreelancerEmail.update({password: hashedPassword}) //then update the password using freelancer user
             res.status(202)
             .json({
                 status: 'success',
             })
         }
-        if(password !== confirmNewPassword){
-            res.status(402).json({
-                status: 'fail',
-                message: 'password - confirm password tidak sama!'
-            })
-        }
-    })
+
 
 }
 

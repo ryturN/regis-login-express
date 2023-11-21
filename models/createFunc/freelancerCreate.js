@@ -12,7 +12,7 @@ const createFreelancer = async function(freelancer_id,fullName,username,email,pa
         password:hashedPassword,
         });
 }
-const updateFreelancer = async function(password){
+const updateFreelancerPassword = async function(password){
     const hashedPassword = await bcrypt.hashSync(password,10)
     freelancerTable.update({
         password:hashedPassword
@@ -38,6 +38,6 @@ const findFreelancer = async function(username, password) {
 
 module.exports = {
     createFreelancer,
-    updateFreelancer,
+    updateFreelancerPassword,
     findFreelancer
 }
