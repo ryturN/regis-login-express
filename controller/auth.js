@@ -8,6 +8,7 @@ const dotenv= require('dotenv');
 const jwt = require('jsonwebtoken')
 const { nanoid } = require('nanoid') 
 const { Op } = require('sequelize');
+const { createUsersRecord, createFreelanceRecord } = require('../models/createFunc/createRecord');
 
 dotenv.config();
 
@@ -23,6 +24,8 @@ exports.login = async(req,res)=>{
 
     //checking if Consumer 
     if(user){
+      const getId = user.consumerId
+      createUsersRecord(getId)
       const token = jwt.sign({username},process.env.ACCESS_TOKEN_SECRET,{expiresIn: '1h'})
        return res.cookie('verifyToken',token,{
         httpOnly: true,
@@ -43,6 +46,9 @@ exports.login = async(req,res)=>{
     }
     //checking if Freelancer
       if(freelancer){
+
+        const getId = freelancer.freelancer_id
+        createFreelanceRecord(getId)
         const token = jwt.sign({username},process.env.ACCESS_TOKEN_SECRET,{expiresIn: '1h'})
         return res.cookie('verifyToken',token,{
           httpOnly: true,
@@ -136,6 +142,12 @@ exports.verify = async (req,res)=>{
       exports.register = async (req,res)=>{
         try{
         const {fullName,username ,email,password,confirmPassword,options}= req.body
+        if (typeof fullName === "undefined"){
+          return res.status(401).json({
+            status: 'fail',
+            message: 'must fill all form!',
+          })
+        }
         const dataStorage = {
           fullName : req.body.fullName,
           username : req.body.username,
@@ -156,26 +168,13 @@ exports.verify = async (req,res)=>{
     const emailCheck= await Users.findAll({where: {email}}) //then if username is not taken , then checking email if already taken then status fail
     const emailCheckF= await freelancerTable.findAll({where: {email}})
     if(options == 'consumer'){ //if options "consumer"
-      if (usernameCheck.length > 0 ) { //checking username if already taken then status fail
+      if (usernameCheck.length > 0 || usernameCheckF.length) { //checking username if already taken then status fail
         return res.status(401).json({
           status: 'fail',
           message: 'username already taken!' 
         });
       }
-      if (usernameCheckF.length > 0 ) { //checking username if already taken then status fail
-        return res.status(401).json({
-          status: 'fail',
-          message: 'username already taken!' 
-        });
-      }
-      
-      if(emailCheck.length > 0 ){
-        return res.status(401).json({
-          status: 'fail',
-          message: 'email already taken!'
-        })
-      }
-      if(emailCheckF.length > 0 ){
+      if(emailCheck.length > 0 || emailCheckF.length > 0){
         return res.status(401).json({
           status: 'fail',
           message: 'email already taken!'
@@ -183,26 +182,14 @@ exports.verify = async (req,res)=>{
       }
     }
     if(options == 'freelancer'){ //if option "consumer"
-      if (usernameCheckF.length > 0 ) { //checking username if already taken then status fail
-        return res.status(401).json({ 
-          status: 'fail',
-          message: 'username already taken!'
-        });
-      }
-      if (usernameCheck.length > 0 ) { //checking username if already taken then status fail
+      if (usernameCheckF.length > 0 || usernameCheck.length > 0) { //checking username if already taken then status fail
         return res.status(401).json({ 
           status: 'fail',
           message: 'username already taken!'
         });
       }
  //if username is not taken , then checking email is already taken or not , if taken then status fail
-    if(emailCheckF.length > 0){
-        return res.status(401).json({
-          status: 'fail',
-          message: 'email already taken!'
-        })
-      }
-    if(emailCheck.length > 0){
+    if(emailCheckF.length > 0 || emailCheck.length > 0){
         return res.status(401).json({
           status: 'fail',
           message: 'email already taken!'

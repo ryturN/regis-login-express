@@ -5,6 +5,7 @@ const  profile  = require('../controller/profile.js');
 const jwt = require('jsonwebtoken')
 const {Users,freelancerTable} = require('../models/table.js');
 const  resetPassword  = require('../controller/resetPassword.js');
+const { newProjectHandler, deleteProjectsHandler } = require('../controller/projects.js');
 
 
 const router = express.Router();
@@ -57,12 +58,12 @@ router.get('/logout',(req,res)=>{
         message: 'See You Later Nerd'})
 })
 
-router.get('*',(req,res)=>{
-    res.status(404).json({
-        status: 'fail',
-        message: 'u got wrong address bro'
-    })
-})
+// router.get('*',(req,res)=>{
+//     res.status(404).json({
+//         status: 'fail',
+//         message: 'u got wrong address bro'
+//     })
+// })
 
 
 //  ============================= POST ROUTER ========================================== //
@@ -75,9 +76,10 @@ router.all('/profile/edit',profile.updateProfile);
 router.post('/forget',resetPassword.forgetPassword);
 router.post('/forget/verify', resetPassword.verifyCode)
 router.post('/forget/verify/new', resetPassword.enterNewPassword)
-
-
-
+router.post('/addSkill',profile.addSkill);
+router.post('/newProject',newProjectHandler)
+router.post('/deleteProject',deleteProjectsHandler)
+router.get('/skills/get',profile.getSkills)
 
 
 

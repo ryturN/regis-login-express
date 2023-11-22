@@ -1,5 +1,5 @@
 const db = require('../dbconfig/index');
-const {DataTypes} = require('sequelize');
+const {DataTypes, Sequelize} = require('sequelize');
 const bcrypt = require('bcrypt');
 
 
@@ -45,9 +45,6 @@ const freelancers= {
     level: {
         type: DataTypes.INTEGER,
         defaultValue: 1,
-    },
-    skills: {
-        type: DataTypes.STRING,
     },
     socialMedia: {
         type: DataTypes.STRING

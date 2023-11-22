@@ -1,12 +1,10 @@
 const {LocalStorage} = require('node-localstorage')
 const db = require('../dbconfig/index')
 localStorage = new LocalStorage('./scratch')
-const {Users, freelancerTable}= require('../models/table')
-const {createUser,findUser,updateUser} = require('../models/createFunc/users')
-const {createFreelancer,updateFreelancer,findFreelancer} = require('../models/createFunc/freelancerCreate')
-const auth = require('./auth')
+const {Users, freelancerTable,skillsTables}= require('../models/table')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
+const createSkills =require('../models/createFunc/createSkills')
 
 //search users with params!
 exports.profileUsers = async (req, res) => {
@@ -125,7 +123,7 @@ exports.updateProfile = async(req,res)=>{
      const usernameCheck = await Users.findAll({where : {username}})
 
     if(userConsumer){
-      if(fullName == userConsumer.fullName && email == userConsumer.email && password == userConsumer.password(bcrypt.compareSync(password, userConsumer.password)) && telephoneNumber == userConsumer.telephoneNumber && nationalId == userConsumer.nationalId){
+      if(fullName == userConsumer.fullName || email == userConsumer.email || password == userConsumer.password(bcrypt.compareSync(password, userConsumer.password)) || telephoneNumber == userConsumer.telephoneNumber || nationalId == userConsumer.nationalId){
         return res.status(401).json({
           status: 'fail',
           message: 'nothing change!'
@@ -133,7 +131,7 @@ exports.updateProfile = async(req,res)=>{
       }
     }
     if(userConsumer){
-      if(fullName == userFreelancer.fullName && email == userFreelancer.email && password == userFreelancer.password(bcrypt.compareSync(password, userFreelancer.password)) && telephoneNumber == userFreelancer.telephoneNumber && nationalId == userFreelancer.nationalId){
+      if(fullName == userFreelancer.fullName || email == userFreelancer.email || password == userFreelancer.password(bcrypt.compareSync(password, userFreelancer.password)) || telephoneNumber == userFreelancer.telephoneNumber || nationalId == userFreelancer.nationalId){
         return res.status(401).json({
           status: 'fail',
           message: 'nothing change!'
@@ -175,3 +173,88 @@ exports.updateProfile = async(req,res)=>{
       });
     }
   };
+
+
+  exports.addSkill = async(req,res)=>{
+    try {
+      const cookie = await req.cookies;
+      const skills = req.body.skills
+      const token = cookie.verifyToken;
+      
+      if (!cookie.verifyToken) {
+        return res.status(402).json({
+          status: 'fail',
+          message: 'unauthorized!'
+        });
+      }
+
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, async (err, decoded) => {
+      if (err) {
+        return res.redirect('/');
+      }
+      const username = decoded.username
+      const freelancer = await freelancerTable.findOne({where:{username}})
+      const getId = freelancer.freelancer_id
+      console.log(getId)
+      if(!freelancer){
+        return res.status(404).json({
+          status: 'fail',
+          message: 'u are not allowed!'
+        })
+      }  
+      createSkills(getId,skills)
+      res.status(202).json({
+        status: 'success',
+          message: 'Skill Successfully Add!',
+          data: {
+            skill: skills,
+            id : getId
+          }
+        })
+    })
+  } catch (error) {
+    return res.status(500).json({
+      status: 'fail',
+      message: 'Internal server error'
+    });
+  
+  }
+}
+
+exports.getSkills = async(req,res)=>{
+  try{
+    const cookie = await req.cookies
+    if(!cookie.verifyToken){
+      return res.status(402)
+      .json({
+        status: 'fail',
+        message: 'unauthorized!'
+      })
+    }
+    const token = cookie.verifyToken
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, async (err, decoded) => {
+      if (err) {
+        return res.redirect('/');
+      }
+      const username = decoded.username
+      const freelancer = await freelancerTable.findOne({where:{username}})
+      const freelancerId = freelancer.freelancer_id
+      const getSkill = await skillsTables.findAll({attributes: ['freelancerId','skills'],where:{freelancerId}})
+      if(getSkill){
+        return res.status(202)
+        .json({
+          status:'success',
+          message: 'successfully get skills!',
+          data:{
+            getSkill
+          }
+        })
+      }
+    })
+  }catch(err){
+    return res.status(500).json({
+      status:'fail',
+      message: 'Internal server error'
+    })
+  }
+}
