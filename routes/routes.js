@@ -58,12 +58,12 @@ router.get('/logout',(req,res)=>{
         message: 'See You Later Nerd'})
 })
 
-// router.get('*',(req,res)=>{
-//     res.status(404).json({
-//         status: 'fail',
-//         message: 'u got wrong address bro'
-//     })
-// })
+router.get('*',(req,res)=>{
+    res.status(404).json({
+        status: 'fail',
+        message: 'u got wrong address bro'
+    })
+})
 
 
 //  ============================= POST ROUTER ========================================== //

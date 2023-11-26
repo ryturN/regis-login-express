@@ -14,6 +14,10 @@ const loggedFreelanceRecord = {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW
     },
+    logoutRecord: {
+        type: DataTypes.NOW,
+        defaultValue: 'NULL'
+    }
 }
 
 
@@ -30,6 +34,10 @@ const loggedUsersRecord ={
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW
     },
+    logoutRecord: {
+        type: DataTypes.NOW,
+        defaultValue: 'NULL'
+    }
 }
 
 

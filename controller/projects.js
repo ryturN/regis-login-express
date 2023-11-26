@@ -33,6 +33,7 @@ exports.newProjectHandler = async (req, res) => {
                     .status(404).json({status: "failed", message: "There's nothing to be requested in the body data!"})
                 }
                 const { project_name, project_desc, deadline, project_category } = req.body;
+
                 if(!project_name || !project_desc || !deadline || !project_category) {
                     return res
                     .status(404).json({status: "failed", message: "There's nothing to be requested in the body data!"})

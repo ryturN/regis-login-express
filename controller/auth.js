@@ -200,40 +200,13 @@ exports.verify = async (req,res)=>{
       return res.status(401).send('Password & Confirm Password Tidak Sama!');
     }
 
-    //create transporter for sending verif code
-      let transporter = nodemailer.createTransport({
-        service: "gmail",
-        auth: {
-          user: `watashiox@gmail.com`,
-          pass:`xtcvwuvoxccwcong`,
-        },
-      });
-      
-    //if username , email , and password already checking ,then sending email verification code to user email 
-      let mailOptions = {
-        from: '"LowerMoon" uppermoon1404@gmail.com',
-        to: req.body.email,
-        subject: "Verification Code",
-        text: `Your verification code is ${verificationCode}.`,
-        html: `
-        <hr>
-        <h1 style: "text-align: center;"> Soft Skill</h1>
-        <hr>
-        <br>
-        <br>Hai ${dataStorage.username}<br>
-        <br><b>Your Verification code is ${verificationCode}<b></br>
-        <br>
-        <br>
-        <hr>
-        <br><a>Please don't reply to this email</a></footer>
-        `,
-      };
-      transporter.sendMail(mailOptions, (error, info) => {
+      // sending to mailOptions Function
+      transporter.sendMail(await mailOptions(email,username,verificationCode),  (error, info) => {
         if (error) {
           console.error("Error sending email:", error);
           return res.send("Error sending email").code(500);
         }
-        console.log("Message sent: %s", info.messageId);
+        return console.log("Message sent: %s", info.messageId);
       });
 
       res.status(202).json({
